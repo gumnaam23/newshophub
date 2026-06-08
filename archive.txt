@@ -1,0 +1,178 @@
+src/
+├── app/
+│   ├── layout.tsx                 # Root layout with metadata, fonts, providers
+│   ├── page.tsx                   # Homepage
+│   ├── loading.tsx                # Global loading UI
+│   ├── error.tsx                  # Global error UI
+│   ├── not-found.tsx              # 404 page
+│   │
+│   ├── products/
+│   │   ├── page.tsx               # Products listing page
+│   │   ├── loading.tsx            # Products loading skeleton
+│   │   ├── [id]/
+│   │   │   ├── page.tsx           # Single product detail page
+│   │   │   └── not-found.tsx      # Product not found
+│   │   ├── categories/
+│   │   │   ├── page.tsx           # All categories page
+│   │   │   └── [slug]/
+│   │   │       └── page.tsx       # Category specific products
+│   │   └── search/
+│   │       └── page.tsx           # Search results page
+│   │
+│   ├── cart/
+│   │   ├── page.tsx               # Shopping cart page
+│   │   └── checkout/
+│   │       ├── page.tsx           # Checkout page (step 1)
+│   │       ├── shipping/
+│   │       │   └── page.tsx       # Shipping info (step 2)
+│   │       ├── payment/
+│   │       │   └── page.tsx       # Payment method (step 3)
+│   │       └── confirmation/
+│   │           └── page.tsx       # Order confirmation (step 4)
+│   │
+│   ├── account/
+│   │   ├── page.tsx               # Account dashboard
+│   │   ├── profile/
+│   │   │   └── page.tsx           # Profile management
+│   │   ├── wishlist/
+│   │   │   └── page.tsx           # Wishlist page
+│   │   ├── orders/
+│   │   │   ├── page.tsx           # Order history
+│   │   │   └── [orderId]/
+│   │   │       └── page.tsx       # Single order details
+│   │   └── addresses/
+│   │       ├── page.tsx           # Saved addresses
+│   │       └── add/
+│   │           └── page.tsx       # Add new address
+│   │
+│   ├── auth/
+│   │   ├── login/
+│   │   │   └── page.tsx           # Login page
+│   │   ├── register/
+│   │   │   └── page.tsx           # Registration page
+│   │   ├── forgot-password/
+│   │   │   └── page.tsx           # Forgot password
+│   │   └── reset-password/
+│   │       └── page.tsx           # Reset password
+│   │
+│   ├── about/
+│   │   └── page.tsx               # About us page
+│   │
+│   ├── contact/
+│   │   └── page.tsx               # Contact page
+│   │
+│   └── api/
+│       ├── auth/                  # Authentication endpoints
+│       ├── products/              # Products API
+│       ├── cart/                  # Cart operations
+│       ├── orders/                # Orders API
+│       └── webhooks/              # Payment webhooks
+
+
+
+
+/api/newsletter/subscribe           send mail
+/api/order                          send mail
+
+
+
+/products/categories & /products/search    may be need remove
+
+
+/account/profile changepassword
+
+account/orders/6a155a80646d470d251ed89f  download invoice print 
+
+
+
+url category set in products
+
+
+                      src/
+├── app/
+│   ├── admin/
+│   │   ├── layout.tsx                 # Admin layout with sidebar
+│   │   ├── page.tsx                   # Admin dashboard
+│   │   ├── loading.tsx                # Admin loading skeleton
+│   │   │
+│   │   ├── products/
+│   │   │   ├── page.tsx               # Manage products (list, add, edit)
+│   │   │   ├── add/
+│   │   │   │   └── page.tsx           # Add new product
+│   │   │   └── [id]/
+│   │   │       ├── edit/
+│   │   │       │   └── page.tsx       # Edit product
+│   │   │       └── delete/
+│   │   │           └── route.ts       # Delete product API
+│   │   │
+│   │   ├── orders/
+│   │   │   ├── page.tsx               # Manage orders
+│   │   │   └── [id]/
+│   │   │       ├── page.tsx           # Order details
+│   │   │       └── update-status/
+│   │   │           └── route.ts       # Update order status
+│   │   │
+│   │   ├── users/
+│   │   │   ├── page.tsx               # Manage users
+│   │   │   ├── [id]/
+│   │   │   │   ├── page.tsx           # User details
+│   │   │   │   └── edit/
+│   │   │   │       └── page.tsx       # Edit user
+│   │   │   └── role/
+│   │   │       └── route.ts           # Update user role
+│   │   │
+│   │   ├── categories/
+│   │   │   ├── page.tsx               # Manage categories
+│   │   │   ├── add/
+│   │   │   │   └── page.tsx           # Add category
+│   │   │   └── [id]/
+│   │   │       ├── edit/
+│   │   │       │   └── page.tsx       # Edit category
+│   │   │       └── delete/
+│   │   │           └── route.ts       # Delete category
+│   │   │
+│   │   ├── reviews/
+│   │   │   ├── page.tsx               # Manage reviews
+│   │   │   └── [id]/
+│   │   │       ├── approve/
+│   │   │       │   └── route.ts       # Approve review
+│   │   │       └── delete/
+│   │   │           └── route.ts       # Delete review
+│   │   │
+│   │   ├── settings/
+│   │   │   ├── page.tsx               # General settings
+│   │   │   ├── profile/
+│   │   │   │   └── page.tsx           # Admin profile
+│   │   │   └── security/
+│   │   │       └── page.tsx           # Security settings
+│   │   │
+│   │   ├── analytics/
+│   │   │   └── page.tsx               # Analytics dashboard
+│   │   │
+│   │   ├── coupons/
+│   │   │   ├── page.tsx               # Manage coupons
+│   │   │   ├── add/
+│   │   │   │   └── page.tsx           # Add coupon
+│   │   │   └── [id]/
+│   │   │       ├── edit/
+│   │   │       │   └── page.tsx       # Edit coupon
+│   │   │       └── delete/
+│   │   │           └── route.ts       # Delete coupon
+│   │   │
+│   │   └── api/
+│   │       ├── stats/
+│   │       │   └── route.ts           # Dashboard stats API
+│   │       ├── products/
+│   │       │   └── bulk/
+│   │       │       └── route.ts       # Bulk product actions
+│   │       └── export/
+│   │           └── route.ts           # Export data
+│   │
+│   └── api/
+│       └── admin/
+│           ├── stats/
+│           │   └── route.ts           # Admin stats API
+│           ├── dashboard/
+│           │   └── route.ts           # Dashboard data API
+│           └── analytics/
+│               └── route.ts           # Analytics API

@@ -1,0 +1,129 @@
+@import 'tailwindcss';
+
+/* Theme Configuration for Tailwind v4 */
+@theme {
+  /* Colors */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  
+  /* Dark Mode Colors */
+  --color-dark-bg: #111827;
+  --color-dark-surface: #1f2937;
+  --color-dark-border: #374151;
+  
+  /* Spacing */
+  --spacing: 0.25rem;
+  
+  /* Animations */
+  --animate-spin-slow: spin 3s linear infinite;
+  --animate-bounce-slow: bounce 2s infinite;
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  
+  /* Font Families */
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  
+  /* Breakpoints */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+}
+
+/* Custom Utilities */
+@utility container {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  
+  @media (width >= 640px) {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  
+  @media (width >= 1024px) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@utility text-gradient {
+  background: linear-gradient(to right, var(--color-primary-600), var(--color-primary-700));
+  background-clip: text;
+  color: transparent;
+}
+
+@utility backdrop-blur-custom {
+  backdrop-filter: blur(12px);
+}
+
+/* Dark mode support using @custom-variant */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Base styles */
+@layer base {
+  * {
+    border-color: var(--color-gray-200);
+  }
+  
+  body {
+    background-color: white;
+    color: var(--color-gray-900);
+  }
+  
+  .dark body {
+    background-color: var(--color-dark-bg);
+    color: white;
+  }
+}
+
+/* Component styles */
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+    border-radius: 0.5rem;
+    cursor: pointer;
+  }
+  
+  .btn:focus {
+    outline: none;
+    ring: 2px solid var(--color-primary-500);
+    ring-offset: 2px;
+  }
+  
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .card {
+    background-color: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+    overflow: hidden;
+  }
+  
+  .dark .card {
+    background-color: var(--color-dark-surface);
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3);
+  }
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
