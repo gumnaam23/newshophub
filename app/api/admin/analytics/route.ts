@@ -91,18 +91,18 @@ export async function GET(request: NextRequest) {
     ]);
 
     // ✅ Fixed Customer insights
-    const allOrders = await Order.find()
-      .populate('userId', '_id')
-      .lean();
+    const allOrders = await Order.find().select('userId').lean();
     
-    const userOrderCount = new Map<string, number>();
+    const userOrderCount = new Map();
     
-    allOrders.forEach(order => {
-      const userId = order.userId?._id?.toString() || order.userId?.toString();
+    for (const order of allOrders) {
+      // Safely get userId as string
+      const userId = order.userId ? order.userId.toString() : null;
       if (userId) {
-        userOrderCount.set(userId, (userOrderCount.get(userId) || 0) + 1);
+        const count = userOrderCount.get(userId) || 0;
+        userOrderCount.set(userId, count + 1);
       }
-    });
+    }
 
     const totalUniqueUsers = userOrderCount.size;
     const returningUsersCount = Array.from(userOrderCount.values()).filter(count => count > 1).length;
