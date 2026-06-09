@@ -6,6 +6,19 @@ import { NextResponse } from 'next/server';
 export const runtime = 'nodejs';
 
 export default auth((req) => {
+
+    const siteEnabled = false; // launch ke waqt true kar dena
+
+  if (!siteEnabled) {
+    return new NextResponse('Website is under development. Coming soon!', {
+      status: 503,
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+    });
+  }
+
+  
   const token = req.auth;
   const isAuth = !!token;
   const isAuthPage = req.nextUrl.pathname.startsWith('/auth');

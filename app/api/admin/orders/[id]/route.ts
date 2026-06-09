@@ -46,9 +46,14 @@ export async function GET(
     }
 }
 
+interface userType {
+    name: string,
+    email: string,
+    avatar: string
+}
 export async function PUT(
     request: NextRequest,
-    { params }: { params: Promise<{ id: string }>  }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const session = await auth();
@@ -62,13 +67,11 @@ export async function PUT(
         await dbConnect();
 
         const { id } = await params;
-
         const { status, trackingNumber, carrier, notes } = await request.json();
 
         const order = await Order.findById(id)
-            .populate('userId', 'name email avatar')  
-            .populate('items.productId', 'name images')
-            .lean();
+            .populate('userId', 'name email avatar')
+            .populate('items.productId', 'name images');
 
         if (!order) {
             return NextResponse.json(
@@ -78,8 +81,8 @@ export async function PUT(
         }
 
         const previousStatus = order.status;
-        order.status = status || order.status;
-
+        
+        if (status) order.status = status;
         if (trackingNumber) order.trackingNumber = trackingNumber;
         if (carrier) order.carrier = carrier;
         if (notes) order.adminNotes = notes;
@@ -87,20 +90,31 @@ export async function PUT(
         await order.save();
 
         // Send email notification when order is shipped
-        if (status === 'shipped' && previousStatus !== 'shipped') {
-            await sendOrderShippedEmail(
-                order.user.email,
-                order.user.name,
-                order.orderNumber,
-                trackingNumber || order.trackingNumber,
-                carrier || order.carrier,
-                `https://shophub.com/track-order?order=${order.orderNumber}`
-            );
-        }
+        // if (status === 'shipped' && previousStatus !== 'shipped') {
+        //     const user = order.userId as userType;
+            // await sendOrderShippedEmail(
+            //     user.email,
+            //     user.name,
+            //     order.orderNumber,
+            //     trackingNumber || order.trackingNumber,
+            //     carrier || order.carrier,
+            //     `https://shophub.com/track-order?order=${order.orderNumber}`
+            // );
+        // }
 
         return NextResponse.json({
             success: true,
-            data: order,
+            data: {
+                _id: order._id,
+                orderNumber: order.orderNumber,
+                status: order.status,
+                trackingNumber: order.trackingNumber,
+                carrier: order.carrier,
+                adminNotes: order.adminNotes,
+                userId: order.userId,
+                items: order.items,
+                total: order.total
+            },
             message: 'Order updated successfully'
         });
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
-import { IPaymentMethod, User } from '@/models/User';
+import { IPaymentMethod, IUser, User } from '@/models/User';
 import { auth } from '@/lib/auth';
 
 export async function GET() {
@@ -17,7 +17,7 @@ export async function GET() {
     
     const user = await User.findOne({ email: session.user.email })
       .select('-password -resetToken -resetTokenExpiry -accounts')
-      .lean();
+      .lean<IUser>();
     
     if (!user) {
       return NextResponse.json(

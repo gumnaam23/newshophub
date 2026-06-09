@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
-import { User } from '@/models/User';
+import { User, IUser } from '@/models/User';
 import { Order } from '@/models/Order';
 import { auth } from '@/lib/auth';
 import { Types } from 'mongoose';
 
+// Type for user with wishlist and addresses
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -21,18 +22,12 @@ export async function GET(
     await dbConnect();
 
     const { id } = await params;
-    const userId = id
+    const userId = id;
 
-    const [user, orders, orderStats, wishlistCount, addressesCount] = await Promise.all([
-      User.findById(userId).select('-password -resetToken -resetTokenExpiry').lean(),
-      Order.find({ userId }).sort({ createdAt: -1 }).limit(5).lean(),
-      Order.aggregate([
-        { $match: { userId: new Types.ObjectId(userId), paymentStatus: 'paid' } },
-        { $group: { _id: null, total: { $sum: '$total' } } }
-      ]),
-      User.findById(userId).select('wishlist').lean(),
-      User.findById(userId).select('addresses').lean()
-    ]);
+    // Get full user
+    const user = await User.findById(userId)
+      .select('-password -resetToken -resetTokenExpiry')
+      .lean<IUser>();
 
     if (!user) {
       return NextResponse.json(
@@ -41,8 +36,20 @@ export async function GET(
       );
     }
 
+    const [orders, orderStats, ordersCount] = await Promise.all([
+      Order.find({ userId }).sort({ createdAt: -1 }).limit(5).lean(),
+      Order.aggregate([
+        { $match: { userId: new Types.ObjectId(userId), paymentStatus: 'paid' } },
+        { $group: { _id: null, total: { $sum: '$total' } } }
+      ]),
+      Order.countDocuments({ userId })
+    ]);
+
     const totalSpent = orderStats[0]?.total || 0;
-    const ordersCount = await Order.countDocuments({ userId });
+    
+    // ✅ Access wishlist and addresses from user object (no any needed)
+    const wishlistCount = user.wishlist?.length || 0;
+    const addressesCount = user.addresses?.length || 0;
 
     return NextResponse.json({
       success: true,
@@ -50,8 +57,8 @@ export async function GET(
         ...user,
         ordersCount: ordersCount || 0,
         totalSpent: totalSpent || 0,
-        wishlistCount: wishlistCount?.wishlist?.length || 0,
-        addressesCount: addressesCount?.addresses?.length || 0,
+        wishlistCount: wishlistCount,
+        addressesCount: addressesCount,
         recentOrders: orders.map(order => ({
           _id: order._id,
           orderNumber: order.orderNumber,

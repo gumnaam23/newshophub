@@ -1,8 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
-import { Order } from '@/models/Order';
+import { IOrderItem, IShippingAddress, Order } from '@/models/Order';
 import { auth } from '@/lib/auth';
 import { User } from '@/models/User';
+import { Types } from 'mongoose';
+
+interface PopulatedUser {
+  _id: Types.ObjectId;
+  name: string;
+  email: string;
+}
+
+export interface PopulatedOrder {
+  _id: string;
+  orderNumber: string;
+  userId: PopulatedUser;
+  items: IOrderItem[];
+  subtotal: number;
+  shipping: number;
+  tax: number;
+  total: number;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  paymentStatus: 'pending' | 'paid' | 'failed';
+  paymentMethod: string;
+  shippingAddress: IShippingAddress;
+  trackingNumber?: string;
+  carrier?: string;
+  adminNotes?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 
 export async function GET(
   request: NextRequest,
@@ -21,8 +49,8 @@ export async function GET(
     const params = await context.params 
     
     const order = await Order.findById(params.orderId)
-      .populate('userId', 'name email')
-      .lean();
+      .populate<{ userId: PopulatedUser }>('userId', 'name email')
+      .lean() as PopulatedOrder | null;
     
     if (!order) {
       return NextResponse.json(

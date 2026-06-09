@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
-import { User } from '@/models/User';
+import { IUser, User } from '@/models/User';
 import { Order } from '@/models/Order';
 import { auth } from '@/lib/auth';
 import { Types } from 'mongoose';
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
     const user = await User.findOne({ email: session.user.email })
       .select('wishlist addresses')
-      .lean();
+      .lean<IUser>();
 
     if (!user) {
       return NextResponse.json(
