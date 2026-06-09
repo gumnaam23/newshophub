@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     // Current period data
     const [currentRevenue, currentOrders, currentUsers] = await Promise.all([
       Order.aggregate([
-        { $match: { createdAt: { $gte: startDate }, paymentStatus: 'paid' } }, // ✅ Use paymentStatus
+        { $match: { createdAt: { $gte: startDate }, paymentStatus: 'paid' } },
         { $group: { _id: null, total: { $sum: '$total' } } }
       ]),
       Order.countDocuments({ createdAt: { $gte: startDate } }),
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
     // Previous period data
     const [previousRevenue, previousOrders, previousUsers] = await Promise.all([
       Order.aggregate([
-        { $match: { createdAt: { $gte: previousStartDate, $lt: startDate }, paymentStatus: 'paid' } }, // ✅ Use paymentStatus
+        { $match: { createdAt: { $gte: previousStartDate, $lt: startDate }, paymentStatus: 'paid' } },
         { $group: { _id: null, total: { $sum: '$total' } } }
       ]),
       Order.countDocuments({ createdAt: { $gte: previousStartDate, $lt: startDate } }),
@@ -90,8 +90,8 @@ export async function GET(request: NextRequest) {
       }
     ]);
 
-    // ✅ Fixed Customer insights
-     const allOrders = await Order.find({}, 'userId').lean();
+    // ✅ BILKUL SIMPLE - Sirf userId le lo
+    const allOrders = await Order.find({}, 'userId').lean();
     
     const userOrderCount = new Map();
     
@@ -103,7 +103,6 @@ export async function GET(request: NextRequest) {
       }
     }
 
-
     const totalUniqueUsers = userOrderCount.size;
     const returningUsersCount = Array.from(userOrderCount.values()).filter(count => count > 1).length;
     const returningCustomerRate = totalUniqueUsers > 0 
@@ -111,8 +110,8 @@ export async function GET(request: NextRequest) {
       : 0;
     
     const totalOrdersCount = await Order.countDocuments();
-    const totalRevenue = currentRevenue[0]?.total || 0;
-    const averageOrderValue = totalOrdersCount > 0 ? totalRevenue / totalOrdersCount : 0;
+    const totalRevenueAmount = currentRevenue[0]?.total || 0;
+    const averageOrderValue = totalOrdersCount > 0 ? totalRevenueAmount / totalOrdersCount : 0;
 
     const customerInsights = {
       totalCustomers: totalUniqueUsers,
@@ -122,7 +121,6 @@ export async function GET(request: NextRequest) {
       averageOrderValue: averageOrderValue
     };
 
-    // Calculate conversion rate (orders / total users)
     const totalUsers = await User.countDocuments();
     const conversionRate = totalUsers > 0 ? (totalOrdersCount / totalUsers) * 100 : 0;
 
